@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
@@ -6,6 +7,9 @@ using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
 using DynamoStudentManager.Models;
 using Snapshooter.Xunit;
+using WireMock.RequestBuilders;
+using WireMock.ResponseBuilders;
+using WireMock.Server;
 
 namespace DynamoStudentManagerTests;
 
@@ -13,18 +17,20 @@ namespace DynamoStudentManagerTests;
 public class StudentsTests : IAsyncLifetime
 {
     private IAlbaHost _host;
+    private WireMockServer _server;
 
     private readonly TestcontainersContainer TestContainer = new TestcontainersBuilder<TestcontainersContainer>()
-               .WithImage("localstack/localstack")
-               .WithCleanUp(true)
-               .WithEnvironment("DEFAULT_REGION", "us-east-1")
-               .WithEnvironment("SERVICES", "dynamodb")
-               .WithEnvironment("DOCKER_HOST", "unix:///var/run/docker.sock")
-               .WithEnvironment("DEBUG", "1")
-               .WithPortBinding(4566, 4566).Build();
+        .WithImage("localstack/localstack")
+        .WithCleanUp(true)
+        .WithEnvironment("DEFAULT_REGION", "us-east-1")
+        .WithEnvironment("SERVICES", "dynamodb")
+        .WithEnvironment("DOCKER_HOST", "unix:///var/run/docker.sock")
+        .WithEnvironment("DEBUG", "1")
+        .WithPortBinding(4566, 4566).Build();
 
     public async Task InitializeAsync()
     {
+        _server = WireMockServer.Start();
         await TestContainer.StartAsync();
         _host = await AlbaHost.For<Program>();
 
@@ -38,8 +44,15 @@ public class StudentsTests : IAsyncLifetime
     [Fact]
     public async Task Test_Get_All_Students()
     {
-        var result = await _host.GetAsJson<List<Student>>("/api/students");
+        _server
+            .Given(Request.Create().WithPath("/test").UsingGet())
+            .RespondWith(
+                Response.Create()
+                    .WithStatusCode(200));
 
+        Environment.SetEnvironmentVariable("MS_URL", _server.Urls[0]);
+
+        var result = await _host.GetAsJson<List<Student>>("/api/students");
         Snapshot.Match(result);
     }
 
