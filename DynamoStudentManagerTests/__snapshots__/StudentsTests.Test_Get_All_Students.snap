@@ -1,0 +1,23 @@
+﻿[
+  {
+    "Id": 2,
+    "FirstName": "Mike",
+    "LastName": "Smith",
+    "Class": 2,
+    "Country": "England"
+  },
+  {
+    "Id": 1,
+    "FirstName": "John",
+    "LastName": "Doe",
+    "Class": 10,
+    "Country": "Ireland"
+  },
+  {
+    "Id": 3,
+    "FirstName": "Jane",
+    "LastName": "Jones",
+    "Class": 5,
+    "Country": "New Zeland"
+  }
+]

@@ -1,12 +1,15 @@
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Alba;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
 using DynamoStudentManager.Models;
+using Snapshooter.Xunit;
 
 namespace DynamoStudentManagerTests;
 
+[Collection("StudentTests")]
 public class StudentsTests : IAsyncLifetime
 {
     private IAlbaHost _host;
@@ -35,11 +38,9 @@ public class StudentsTests : IAsyncLifetime
     [Fact]
     public async Task Test_Get_All_Students()
     {
-        await _host.Scenario(_ =>
-       {
-           _.Get.Url("/api/students");
-           _.StatusCodeShouldBeOk();
-       });
+        var result = await _host.GetAsJson<List<Student>>("/api/students");
+
+        Snapshot.Match(result);
     }
 
     [Fact]
@@ -47,11 +48,7 @@ public class StudentsTests : IAsyncLifetime
     {
         var result = await _host.GetAsJson<Student>("/api/students/1");
 
-        Assert.Equal(1, result.Id);
-        Assert.Equal("John", result.FirstName);
-        Assert.Equal("Doe", result.LastName);
-        Assert.Equal(10, result.Class);
-        Assert.Equal("Ireland", result.Country);
+        Snapshot.Match(result);
     }
 
     [Fact]
