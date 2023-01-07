@@ -9,10 +9,7 @@ using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
-AWSOptions awsOptions = new AWSOptions();
-
-// http://localhost:4566 for local
-// http://host.docker.internal for jenkins
+AWSOptions awsOptions = builder.Configuration.GetAWSOptions();
 awsOptions.DefaultClientConfig.ServiceURL = Environment.GetEnvironmentVariable("SERVICE_URL");
 
 builder.Services.AddDefaultAWSOptions(awsOptions);
