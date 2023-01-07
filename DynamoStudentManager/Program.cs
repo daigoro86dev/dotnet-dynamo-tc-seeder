@@ -1,3 +1,4 @@
+using System;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.Extensions.NETCore.Setup;
@@ -8,7 +9,11 @@ using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
-AWSOptions awsOptions = builder.Configuration.GetAWSOptions();
+AWSOptions awsOptions = new AWSOptions();
+
+// http://localhost:4566 for local
+// http://host.docker.internal for jenkins
+awsOptions.DefaultClientConfig.ServiceURL = Environment.GetEnvironmentVariable("SERVICE_URL");
 
 builder.Services.AddDefaultAWSOptions(awsOptions);
 builder.Services.AddAWSService<IAmazonDynamoDB>();
