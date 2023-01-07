@@ -1,6 +1,3 @@
-using System;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Amazon.DynamoDBv2.DataModel;
 using DynamoStudentManager.Models;
@@ -31,15 +28,17 @@ public class StudentsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllStudents()
     {
-        var msUrl = Environment.GetEnvironmentVariable("MS_URL");
-        var response = await new HttpClient().GetAsync($"{msUrl}/test");
+        // var msUrl = Environment.GetEnvironmentVariable("MS_URL");
+        // var response = await new HttpClient().GetAsync($"{msUrl}/test");
 
-        if (response.StatusCode == HttpStatusCode.OK)
-        {
-            var students = await _context.ScanAsync<Student>(default).GetRemainingAsync();
-            return Ok(students);
-        }
-        return ValidationProblem();
+        // if (response.StatusCode == HttpStatusCode.OK)
+        // {
+        //     var students = await _context.ScanAsync<Student>(default).GetRemainingAsync();
+        //     return Ok(students);
+        // }
+        // return ValidationProblem();
+        var students = await _context.ScanAsync<Student>(default).GetRemainingAsync();
+        return Ok(students);
     }
 
     [HttpPost]
