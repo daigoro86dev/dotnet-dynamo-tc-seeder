@@ -24,7 +24,6 @@ public class StudentsTests : IAsyncLifetime
         .WithCleanUp(true)
         .WithEnvironment("DEFAULT_REGION", "us-east-1")
         .WithEnvironment("SERVICES", "dynamodb")
-        .WithEnvironment("DOCKER_HOST", "unix:///var/run/docker.sock")
         .WithEnvironment("DEBUG", "1")
         .WithPortBinding(4566, 4566).Build();
 
